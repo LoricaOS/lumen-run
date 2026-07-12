@@ -85,8 +85,8 @@ static void render(void)
 
     /* Input field. */
     int fw = g_st.w - 2 * FIELD_X;
-    draw_rounded_rect(s, FIELD_X, FIELD_Y, fw, FIELD_H, 6, THEME_INPUT_BG);
-    draw_rounded_outline(s, FIELD_X, FIELD_Y, fw, FIELD_H, 6, 1, THEME_BORDER);
+    draw_rounded_rect(s, FIELD_X, FIELD_Y, fw, FIELD_H, R_SM, THEME_INPUT_BG);
+    draw_rounded_outline(s, FIELD_X, FIELD_Y, fw, FIELD_H, R_SM, 1, THEME_BORDER);
 
     int ty = FIELD_Y + (FIELD_H - glyph_text_height()) / 2;
     int tx = FIELD_X + PAD;
