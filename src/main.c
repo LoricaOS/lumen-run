@@ -53,6 +53,24 @@ static run_state_t g_st;
 static volatile sig_atomic_t s_term;
 static void sigterm_handler(int s) { (void)s; s_term = 1; }
 
+enum { CMD_CLOSE = 1 };
+
+static void publish_menu(void)
+{
+    lumen_set_menu_t m;
+    glyph_menu_reset(&m, g_st.lwin->id);
+    int f = glyph_menu_add_col(&m, "File");
+    glyph_menu_add_item(&m, f, "Close", CMD_CLOSE);
+    lumen_window_set_menu(g_st.lwin, &m);
+}
+
+static void menu_invoke(uint32_t cmd)
+{
+    switch (cmd) {
+    case CMD_CLOSE: s_term = 1; break;
+    }
+}
+
 static char lc(char c) { return (c >= 'A' && c <= 'Z') ? (char)(c + 32) : c; }
 
 /* Case-insensitive: does s start with prefix? Empty prefix never matches. */
@@ -170,6 +188,8 @@ int main(int argc, char **argv)
     sa.sa_handler = sigterm_handler;
     sigaction(SIGTERM, &sa, NULL);
 
+    publish_menu();
+
     g_st.dirty = 1;
     render();
 
@@ -180,6 +200,8 @@ int main(int argc, char **argv)
         if (r == 1) {
             if (ev.type == LUMEN_EV_CLOSE_REQUEST)
                 break;
+            if (ev.type == LUMEN_EV_MENU_INVOKE)
+                menu_invoke(ev.menu.command);
             if (ev.type == LUMEN_EV_KEY && ev.key.pressed &&
                 !handle_key((uint8_t)ev.key.keycode))
                 break;
